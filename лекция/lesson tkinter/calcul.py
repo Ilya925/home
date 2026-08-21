@@ -2,15 +2,13 @@ from tkinter import *
 
 from tkinter import messagebox as mb
 
-
-#import tkinter as tk
-
 root = Tk()
 root.title("Калькулятор")
 root.geometry("400x600")
 root.configure(bg="#C9F7FC")
 
 expression = ""
+
 
 def button_click(item):
     global expression
@@ -23,6 +21,7 @@ def button_click(item):
             expression += str(item)
     entry.delete(0, END)
     entry.insert(0, expression)
+
 
 def calculate():
     global expression

@@ -1,6 +1,6 @@
-from tkinter import *
+from tkinter0_2 import *
 
-from tkinter import messagebox as mb
+from tkinter0_2 import messagebox as mb
 
 
 def summ():
@@ -21,13 +21,13 @@ def summ():
     slag2 = int(s2)
     slag3 = int(s3)
     summa = slag1 + slag2 + slag3
-    m1['text']= f"{s1} + {s2} + {s3}= {str(summa)}"
+    m1['text'] = f"{s1} + {s2} + {s3}= {str(summa)}"
     answer = mb.askretrycancel(title="Вопрос", message="Сложить еще три числа?")
     if answer:
         e1.delete(0, END)
         e2.delete(0, END)
         e3.delete(0, END)
-        m1['text']= ""
+        m1['text'] = ""
     else:
         window.destroy()
 
@@ -36,7 +36,7 @@ def multi():
     s1 = e1.get()
     if not s1.lstrip('-').isdigit():
         mb.showerror("Ошибка", "В первое поле должно быть введено число")
-        return # Возвращаемся из функции, если ввод некорректен
+        return  # Возвращаемся из функции, если ввод некорректен
     s2 = e2.get()
     if not s2.lstrip('-').isdigit():
         mb.showerror("Ошибка", "Во второе поле должно быть введено число")
@@ -44,21 +44,22 @@ def multi():
     s3 = e3.get()
     if not s3.lstrip('-').isdigit():
         mb.showerror("Ошибка", "В третье поле должно быть введено число")
-        return # Возвращаемся из функции, если ввод некорректен
+        return  # Возвращаемся из функции, если ввод некорректен
 
     slag1 = int(s1)
     slag2 = int(s2)
     slag3 = int(s3)
     summa = slag1 * slag2 * slag3
-    m1['text']= f"{s1} * {s2} * {s3} = {str(summa)}"
+    m1['text'] = f"{s1} * {s2} * {s3} = {str(summa)}"
     answer = mb.askretrycancel(title="Вопрос", message="Умножить еще три числа числа?")
     if answer:
         e1.delete(0, END)
         e2.delete(0, END)
         e3.delete(0, END)
-        m1['text']= ""
+        m1['text'] = ""
     else:
         window.destroy()
+
 
 window = Tk()
 window.title("Калькулятор")
