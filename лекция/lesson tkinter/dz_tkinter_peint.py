@@ -8,7 +8,7 @@ class DrawApp:
     def __init__(self, root):
         self.root = root
         self.root.title('Рисование')
-        self.root.geometry('590x500')
+        self.root.geometry('550x500')
         self.root.resizable(False, False)
 
         # Стартовые настройки
@@ -19,10 +19,13 @@ class DrawApp:
         # Меню
         self.menu_bar = Menu(self.root)
         self.file_menu = Menu(self.menu_bar, tearoff=0)
-        self.file_menu.add_command(label='Выход', command=self.root.quit)
+        self.file_menu.add_command(label='Очистить', accelerator='Ctrl+D', command=self.clear_canvas)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label='Выход', accelerator='Ctrl+Q', command=self.root.quit)
         self.menu_bar.add_cascade(label='Файл', menu=self.file_menu)
         self.root.config(menu=self.menu_bar)
-
+        self.root.bind('<Control-Key-q>', lambda e: self.root.quit())
+        self.root.bind('<Control-Key-d>', lambda e: self.clear_canvas())
         # Холст
         self.canvas = Canvas(self.root, bg='white')
         self.canvas.pack(fill=BOTH, expand=True)
@@ -50,11 +53,6 @@ class DrawApp:
                                     text='Установить толщину',
                                     command=self.update_width)
         self.btn_set_width.pack(side=LEFT, padx=5)
-
-        self.btn_clear = Button(self.toolbar,
-                                text='Очистить',
-                                command=self.clear_canvas)
-        self.btn_clear.pack(side=LEFT, padx=5)
 
         # Привязка событий к кнопкам мыши (к холсту)
         self.canvas.bind('<Button-1>', self.start_draw)
