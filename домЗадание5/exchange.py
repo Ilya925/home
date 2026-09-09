@@ -1,40 +1,56 @@
+
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
 import requests
 
-
-def update_currency_label(event):
-    # Получаем полное название валюты из словаря и обновляем метку
-    code = combobox.get()
+def update_b_label(event):
+    code = base_combobox.get()
     name = currencies[code]
-    currency_label.config(text=name)
+    b_label.config(text=name)
 
+def update_b2_label(event):
+    code = base2_combobox.get()
+    name = currencies[code]
+    b2_label.config(text=name)
+
+def update_t_label(event):
+    code = target_combobox.get()
+    name = currencies[code]
+    t_label.config(text=name)
 
 def exchange():
-    code = combobox.get()
+    target_code = target_combobox.get()
+    base_code = base_combobox.get()
+    base2_code = base2_combobox.get()
 
-    if code:
-        try:
-            response = requests.get('https://open.er-api.com/v6/latest/USD')
-            response.raise_for_status()
+    if target_code and base_code and base2_code:
+        result_text = ""
+        # Запрашиваем курсы для каждой базовой валюты
+        for base_code_i in [base_code, base2_code]:
+            try:
+                response = requests.get(f'https://open.er-api.com/v6/latest/{base_code_i}')
+                response.raise_for_status()
+                data = response.json()
 
-            data = response.json()
+                if target_code in data['rates']:
+                    exchange_rate = data['rates'][target_code]
+                    base = currencies[base_code_i]
+                    target = currencies[target_code]
+                    result_text += f"Курс {exchange_rate:.1f} {target} за 1 {base}\n"
+                else:
+                    result_text += f"Валюта {target_code} не найдена для {base_code_i}\n"
+            except Exception as e:
+                result_text += f"Ошибка ({base_code_i}): {e}\n"
 
-            if code in data['rates']:
-                exchange_rate = data['rates'][code]
-                currency_name = currencies[code]  # currencies.get(code, code)
-                mb.showinfo("Курс обмена", f"Курс к доллару: {exchange_rate:.1f} {currency_name} за 1 доллар")
-            else:
-                mb.showerror("Ошибка", f"Валюта {code} не найдена")
-        except Exception as e:
-            mb.showerror("Ошибка", f"Ошибка: {e}")
+        mb.showinfo("Курсы обмена", result_text)
     else:
-        mb.showwarning("Внимание", "Выберите код валюты")
-
+        mb.showwarning("Внимание", "Выберите коды всех валют")
 
 # Словарь кодов валют и их полных названий
 currencies = {
+    "USD": "Американский доллар",
     "EUR": "Евро",
     "JPY": "Японская йена",
     "GBP": "Британский фунт стерлингов",
@@ -49,18 +65,36 @@ currencies = {
 
 # Создание графического интерфейса
 window = Tk()
-window.title("Курс обмена валюты к доллару")
-window.geometry("360x180")
+window.title("Курс обмена валюты")
+window.geometry("360x420")
 
-Label(text="Выберите код валюты:").pack(padx=10, pady=10)
+Label(text="Базовая валюта:").pack(padx=10, pady=5)
+base_combobox = ttk.Combobox(values=list(currencies.keys()))
+base_combobox.pack(padx=10, pady=5)
+base_combobox.bind("<<ComboboxSelected>>", update_b_label)
 
-combobox = ttk.Combobox(values=list(currencies.keys()))
-combobox.pack(padx=10, pady=10)
-combobox.bind("<<ComboboxSelected>>", update_currency_label)
+b_label = ttk.Label()
+b_label.pack(padx=10, pady=5)
 
-currency_label = ttk.Label()
-currency_label.pack(padx=10, pady=10)
+Label(text="Вторая базовая валюта:").pack(padx=10, pady=5)
+base2_combobox = ttk.Combobox(values=list(currencies.keys()))
+base2_combobox.pack(padx=10, pady=5)
+base2_combobox.bind("<<ComboboxSelected>>", update_b2_label)
 
-Button(text="Получить курс обмена к доллару", command=exchange).pack(padx=10, pady=10)
+b2_label = ttk.Label()
+b2_label.pack(padx=10, pady=5)
+
+Label(text="Целевая валюта:").pack(padx=10, pady=5)
+target_combobox = ttk.Combobox(values=list(currencies.keys()))
+target_combobox.pack(padx=10, pady=5)
+target_combobox.bind("<<ComboboxSelected>>", update_t_label)
+
+t_label = ttk.Label()
+t_label.pack(padx=10, pady=5)
+
+Button(text="Получить курс обмена", command=exchange).pack(padx=10, pady=10)
 
 window.mainloop()
+
+
+
